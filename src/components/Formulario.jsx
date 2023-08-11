@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import useSelectMonedas from '../hooks/useSelectMonedas'
 import { monedas } from '../data/monedas'
 import { useState, useEffect } from 'react'
+import Error from './Error'
 
 const InputSubmit = styled.input`
     background-color: #9497ff;
@@ -27,49 +28,62 @@ const InputSubmit = styled.input`
 const Formulario = () => {
 
     const [cripto, setCripto] = useState([])
+    const [error, setError] = useState(false)
+
 
     const [moneda, SelectMon] = useSelectMonedas("Elige tu moneda", monedas)
     const [criptomoneda, SelectCripto] = useSelectMonedas("Elige tu cripto", cripto)
 
     useEffect(() => {
-      const consultarAPI = async () => {
+        const consultarAPI = async () => {
 
-        const url = "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=20&tsym=USD"
-        
-        const respuesta = await fetch(url)
-        const resultado = await respuesta.json()
+            const url = "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=20&tsym=USD"
 
-        const arrayCryptos = resultado.Data.map(cripto => {
-            const objeto = {
-                id: cripto.CoinInfo.Name,
-                nombre: cripto.CoinInfo.FullName,
-            }
+            const respuesta = await fetch(url)
+            const resultado = await respuesta.json()
 
-            return objeto;
-        })
-        setCripto(arrayCryptos)
-        
-    }
-      consultarAPI()
+            const arrayCryptos = resultado.Data.map(cripto => {
+                const objeto = {
+                    id: cripto.CoinInfo.Name,
+                    nombre: cripto.CoinInfo.FullName,
+                }
+
+                return objeto;
+            })
+            setCripto(arrayCryptos)
+
+        }
+        consultarAPI()
     }, [])
 
+    const handleSubmit = e => {
+        e.preventDefault()
+
+        if ([moneda, criptomoneda].includes("")) {
+            console.log("vacio")
+            setError(true)
+        }
+
+        console.log("enviando")
+
+    }
 
     return (
+        <>
+            {error && <Error>Todos los campos obligatorios</Error>}
+            <form onSubmit={handleSubmit}>
+
+                <SelectMon />
+                <SelectCripto />
+
+                <InputSubmit
+                    type="submit"
+                    value="Cotizar"
+                />
 
 
-        <form action="">
-
-            <SelectMon />
-            <SelectCripto />
-
-            <InputSubmit
-                type="text"
-                value="Cotizar"
-            />
-
-
-        </form>
-
+            </form>
+        </>
     )
 }
 
