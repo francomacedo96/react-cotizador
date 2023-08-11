@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import styled from '@emotion/styled'
 import ImagenC from "./img/imagen-criptos.png"
+import Formulario from './components/Formulario'
 
 const Heading = styled.h1`
   font-family: "Lato";
@@ -51,7 +52,9 @@ function App() {
           alt="imagen"
         />
         <div>
-          <Heading>Cotiza criptomonedas</Heading></div>
+          <Heading>Cotiza criptomonedas</Heading>
+          <Formulario/>
+        </div>
       </Contenedor>
     </>
   )
